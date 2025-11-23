@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, BookOpen, Layers, PenTool, Sun, Moon, Music, Globe, Coffee, Volume2, VolumeX } from 'lucide-react';
+import { Home, BookOpen, Layers, PenTool, Sun, Moon, Music, Globe, Coffee, Volume2, VolumeX, ChevronRight } from 'lucide-react';
 import { AppSection, Language } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,117 +27,107 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const menuItems = [
-    { id: AppSection.HOME, icon: Home, label: language === Language.CN ? '主页' : 'HOME' },
-    { id: AppSection.NOTES, icon: BookOpen, label: language === Language.CN ? '笔记' : 'NOTES' },
-    { id: AppSection.PORTFOLIO, icon: Layers, label: language === Language.CN ? '作品集' : 'WORKS' },
-    { id: AppSection.GUESTBOOK, icon: PenTool, label: language === Language.CN ? '留言板' : 'GUEST' },
-  ];
-
-  const controls = [
-    { 
-      id: 'theme', 
-      icon: darkMode ? Sun : Moon, 
-      action: toggleTheme, 
-      label: darkMode ? (language === Language.CN ? '日间模式' : 'LIGHT MODE') : (language === Language.CN ? '夜间模式' : 'DARK MODE') 
-    },
-    { 
-      id: 'bgm', 
-      icon: bgmPlaying ? Volume2 : VolumeX, 
-      action: toggleBgm, 
-      label: bgmPlaying ? (language === Language.CN ? '静音' : 'MUTE') : (language === Language.CN ? '播放音乐' : 'PLAY BGM') 
-    },
-    { 
-      id: 'lang', 
-      icon: Globe, 
-      action: toggleLanguage, 
-      label: language === Language.CN ? 'ENGLISH' : '中文' 
-    },
-    { 
-      id: 'sponsor', 
-      icon: Coffee, 
-      action: () => alert("Thank you for your support! (Placeholder)"), 
-      label: language === Language.CN ? '赞助作者' : 'SPONSOR' 
-    },
+    { id: AppSection.HOME, icon: Home, label: language === Language.CN ? '主页' : 'HOME', sub: '01' },
+    { id: AppSection.NOTES, icon: BookOpen, label: language === Language.CN ? '学习笔记' : 'NOTES', sub: '02' },
+    { id: AppSection.PORTFOLIO, icon: Layers, label: language === Language.CN ? '作品集' : 'WORKS', sub: '03' },
+    { id: AppSection.GUESTBOOK, icon: PenTool, label: language === Language.CN ? '留言板' : 'GUESTBOOK', sub: '04' },
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-full w-20 bg-soviet-dark text-soviet-cream border-r-4 border-soviet-red z-50 flex flex-col justify-between py-8">
-      {/* Top: Navigation */}
-      <div className="flex flex-col space-y-8 items-center">
-        <div className="w-12 h-12 bg-soviet-red rotate-45 mb-8 flex items-center justify-center border-2 border-soviet-cream">
-           <span className="text-xl font-bold -rotate-45 text-soviet-cream">XC</span>
+    <nav className="fixed left-0 top-0 h-full w-64 bg-soviet-dark text-soviet-cream border-r-8 border-soviet-red z-50 flex flex-col justify-between overflow-hidden shadow-[10px_0_20px_rgba(0,0,0,0.5)]">
+      {/* Top: Branding */}
+      <div className="p-6 pb-0">
+        <div className="w-full bg-soviet-red p-4 mb-8 border-2 border-soviet-cream relative overflow-hidden group">
+           <div className="relative z-10 flex flex-col items-start">
+               <span className="text-4xl font-bold text-soviet-cream tracking-tighter">XC</span>
+               <span className="text-xs font-bold text-soviet-dark mt-1 bg-soviet-cream px-1">UNITY DEV</span>
+           </div>
+           {/* Decorative Lines */}
+           <div className="absolute -right-4 -top-4 w-16 h-32 bg-soviet-dark/20 rotate-12"></div>
         </div>
+      </div>
 
+      {/* Middle: Navigation - Rectangular Buttons */}
+      <div className="flex-1 flex flex-col space-y-1 px-4">
         {menuItems.map((item) => (
-          <div key={item.id} className="relative group w-full flex justify-center">
-            <button
-              onClick={() => onNavigate(item.id)}
-              onMouseEnter={() => setHoveredItem(item.id)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className={`p-3 transition-all duration-300 relative z-10 ${
-                currentSection === item.id 
-                  ? 'bg-soviet-red text-white' 
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <item.icon size={24} strokeWidth={2.5} />
-            </button>
-            
-            {/* Active/Hover Indicator Shape */}
-            {(currentSection === item.id || hoveredItem === item.id) && (
-              <motion.div
-                layoutId="navHighlight"
-                className="absolute inset-0 bg-soviet-red/20 skew-x-12 scale-125"
-                initial={false}
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-              />
-            )}
+          <button
+            key={item.id}
+            onClick={() => onNavigate(item.id)}
+            onMouseEnter={() => setHoveredItem(item.id)}
+            onMouseLeave={() => setHoveredItem(null)}
+            className={`group relative w-full h-16 flex items-center justify-between px-4 py-3 transition-all duration-300 border-2 ${
+              currentSection === item.id 
+                ? 'bg-soviet-cream text-soviet-dark border-soviet-cream' 
+                : 'bg-transparent text-gray-400 border-gray-700 hover:border-soviet-cream hover:text-soviet-cream'
+            }`}
+          >
+            {/* Sliding Background on Hover */}
+            <div className={`absolute inset-0 bg-soviet-red transform origin-left transition-transform duration-300 ${
+                currentSection === item.id ? 'scale-x-0' : (hoveredItem === item.id ? 'scale-x-100' : 'scale-x-0')
+            }`} />
 
-            {/* Tooltip */}
-            <AnimatePresence>
-              {hoveredItem === item.id && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 60 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="absolute left-0 top-2 bg-soviet-red text-white px-3 py-1 text-sm font-bold uppercase tracking-widest whitespace-nowrap border-2 border-soviet-dark shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] pointer-events-none z-20"
-                >
-                  {item.label}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+            <div className="relative z-10 flex items-center gap-3">
+                <item.icon size={20} strokeWidth={2.5} />
+                <span className="font-bold tracking-widest text-lg uppercase">{item.label}</span>
+            </div>
+            
+            <div className="relative z-10 text-xs font-mono opacity-50 flex items-center gap-2">
+                {currentSection === item.id && <ChevronRight size={14} className="animate-pulse"/>}
+                {item.sub}
+            </div>
+          </button>
         ))}
       </div>
 
-      {/* Bottom: Controls */}
-      <div className="flex flex-col space-y-6 items-center">
-        <div className="w-10 h-[2px] bg-soviet-grey"></div>
-        {controls.map((control) => (
-          <div key={control.id} className="relative flex justify-center w-full">
-            <button
-              onClick={control.action}
-              onMouseEnter={() => setHoveredItem(control.id)}
-              onMouseLeave={() => setHoveredItem(null)}
-              className="p-2 hover:bg-soviet-grey/50 transition-colors rounded-none border border-transparent hover:border-soviet-cream"
+      {/* Bottom: Controls - Grid Layout */}
+      <div className="p-4 bg-soviet-grey/10">
+        <div className="flex items-center gap-2 mb-4 px-2">
+             <div className="h-[2px] bg-soviet-red flex-1"></div>
+             <span className="text-xs font-mono text-soviet-grey uppercase">Settings</span>
+             <div className="h-[2px] bg-soviet-red flex-1"></div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+            {/* Theme Toggle */}
+            <button 
+                onClick={toggleTheme}
+                className="flex flex-col items-center justify-center p-3 border border-soviet-grey/50 hover:bg-soviet-cream hover:text-soviet-dark transition-colors group"
+                title={darkMode ? "Light Mode" : "Dark Mode"}
             >
-              <control.icon size={20} />
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                <span className="text-[10px] mt-1 font-bold uppercase">{darkMode ? 'Light' : 'Dark'}</span>
             </button>
-             {/* Control Tooltip */}
-             <AnimatePresence>
-              {hoveredItem === control.id && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 60 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="absolute left-0 top-1 bg-soviet-cream text-soviet-dark px-2 py-1 text-xs font-bold uppercase border border-soviet-dark shadow-[2px_2px_0px_0px_rgba(217,37,37,1)] whitespace-nowrap z-20"
-                >
-                  {control.label}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        ))}
+
+            {/* Language Toggle */}
+            <button 
+                onClick={toggleLanguage}
+                className="flex flex-col items-center justify-center p-3 border border-soviet-grey/50 hover:bg-soviet-cream hover:text-soviet-dark transition-colors"
+                title="Switch Language"
+            >
+                <Globe size={18} />
+                <span className="text-[10px] mt-1 font-bold uppercase">{language}</span>
+            </button>
+
+            {/* BGM Toggle */}
+            <button 
+                onClick={toggleBgm}
+                className={`flex flex-col items-center justify-center p-3 border border-soviet-grey/50 hover:bg-soviet-cream hover:text-soviet-dark transition-colors ${bgmPlaying ? 'text-soviet-red' : ''}`}
+                title="Toggle BGM"
+            >
+                {bgmPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
+                <span className="text-[10px] mt-1 font-bold uppercase">{bgmPlaying ? 'On' : 'Off'}</span>
+            </button>
+
+            {/* Sponsor */}
+            <button 
+                onClick={() => alert("Thank you for your support!")}
+                className="flex flex-col items-center justify-center p-3 border border-soviet-grey/50 hover:bg-soviet-red hover:text-soviet-cream transition-colors"
+                title="Sponsor"
+            >
+                <Coffee size={18} />
+                <span className="text-[10px] mt-1 font-bold uppercase">Gift</span>
+            </button>
+        </div>
       </div>
     </nav>
   );

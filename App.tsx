@@ -44,12 +44,12 @@ function App() {
         return <Home language={language} />;
       default:
         return (
-          <div className="flex items-center justify-center h-screen pl-20">
-            <div className="text-center">
-              <h1 className="text-6xl font-bold mb-4 text-soviet-red uppercase">
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center p-12 border-4 border-dashed border-soviet-red/20 bg-soviet-cream/5">
+              <h1 className="text-6xl font-bold mb-4 text-soviet-red uppercase tracking-widest">
                 {currentSection}
               </h1>
-              <p className="text-2xl font-serif italic border-2 border-current p-4 inline-block transform -rotate-3">
+              <p className="text-2xl font-serif italic border-2 border-current p-4 inline-block transform -rotate-2">
                  {language === Language.CN ? '施工中...' : 'UNDER CONSTRUCTION'}
               </p>
             </div>
@@ -73,7 +73,8 @@ function App() {
         toggleBgm={() => setBgmPlaying(!bgmPlaying)}
       />
 
-      <main className="relative z-0">
+      {/* Main content container with left padding to match Sidebar width (w-64 = 16rem) */}
+      <main className="relative z-0 pl-64 transition-[padding] duration-300">
          {renderContent()}
       </main>
       

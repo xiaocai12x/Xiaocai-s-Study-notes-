@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const CustomCursor: React.FC = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  // Use MotionValues for direct DOM manipulation (bypassing React render cycle)
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  
+  // Create smooth springs for the cursor movement
+  const springConfig = { damping: 25, stiffness: 400, mass: 0.5 }; // Snappy but smooth
+  const x = useSpring(cursorX, springConfig);
+  const y = useSpring(cursorY, springConfig);
+
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      cursorX.set(e.clientX - 16); // Center the 32px cursor
+      cursorY.set(e.clientY - 16);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).tagName === 'BUTTON' || (e.target as HTMLElement).closest('button')) {
+      const target = e.target as HTMLElement;
+      // Check for buttons, links, or specific interactive roles
+      if (
+        target.tagName === 'BUTTON' || 
+        target.closest('button') || 
+        target.tagName === 'A' || 
+        target.closest('a') ||
+        target.getAttribute('role') === 'button'
+      ) {
         setIsHovering(true);
       } else {
         setIsHovering(false);
@@ -25,9 +42,9 @@ const CustomCursor: React.FC = () => {
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
+  }, [cursorX, cursorY]);
 
-  // Don't render on touch devices (simplified check)
+  // Don't render on touch devices
   if (typeof navigator !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
     return null;
   }
@@ -35,27 +52,39 @@ const CustomCursor: React.FC = () => {
   return (
     <motion.div
       className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-exclusion"
-      animate={{
-        x: mousePosition.x - 16,
-        y: mousePosition.y - 16,
-        scale: isHovering ? 2 : 1,
-        rotate: isHovering ? 45 : 0
-      }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      style={{ x, y }} 
     >
-      <div className="relative w-8 h-8">
-        {/* Constructivist Shape: Circle with Cross */}
-        <div className="absolute inset-0 border-2 border-white rounded-full" />
-        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white -translate-y-1/2" />
-        <div className="absolute left-1/2 top-0 h-full w-[2px] bg-white -translate-x-1/2" />
+      <motion.div 
+        className="relative w-8 h-8 flex items-center justify-center"
+        animate={{
+          scale: isHovering ? 1.5 : 1,
+          rotate: isHovering ? 45 : 0
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        {/* Constructivist Shape: Crosshair / Target */}
         
-        {/* Animated outer ring for style */}
+        {/* Horizontal Line */}
+        <div className="absolute w-full h-[2px] bg-white" />
+        {/* Vertical Line */}
+        <div className="absolute h-full w-[2px] bg-white" />
+        
+        {/* Ring */}
         <motion.div 
-          className="absolute -inset-2 border border-dotted border-white rounded-full opacity-50"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 border-2 border-white rounded-full"
+            animate={{
+                borderRadius: isHovering ? "0%" : "50%", // Turn to square on hover
+                borderWidth: isHovering ? "4px" : "2px"
+            }}
         />
-      </div>
+
+        {/* Outer Decor */}
+        <motion.div 
+          className="absolute -inset-4 border border-dashed border-white opacity-40 rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        />
+      </motion.div>
     </motion.div>
   );
 };
