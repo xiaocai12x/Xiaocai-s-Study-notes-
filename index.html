@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>小菜的学习笔记 | Unity Constructivism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              soviet: {
+                red: '#D92525',
+                dark: '#1A1A1A',
+                cream: '#F2F0E4',
+                grey: '#4A4A4A',
+                accent: '#E6B800'
+              }
+            },
+            fontFamily: {
+              sans: ['Oswald', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            },
+            animation: {
+              'spin-slow': 'spin 12s linear infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        cursor: none; /* Hide default cursor for custom one */
+      }
+      /* Fallback for mobile where custom cursor is annoying */
+      @media (pointer: coarse) {
+        body {
+          cursor: auto;
+        }
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .clip-diagonal {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+      }
+      .clip-button {
+        clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-soviet-cream dark:bg-soviet-dark text-soviet-dark dark:text-soviet-cream transition-colors duration-500 overflow-x-hidden">
+    <div id="root"></div>
+  </body>
+</html>
